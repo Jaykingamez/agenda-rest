@@ -1,5 +1,3 @@
-[![npm version](https://badge.fury.io/js/agenda-rest.svg)](https://www.npmjs.com/package/@jaykingamez/agenda-rest)
-
 # agenda-rest
 
 Scheduling as a Service, based on [Agenda](https://github.com/agenda/agenda)
