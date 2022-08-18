@@ -36,6 +36,28 @@ agenda-rest --dbhost localhost --dbname agenda
 | **`-t, --timeout`**         | [optional] Timeout for request duration, default is **5000 ms**                                                         |
 | **`-a, --agenda_settings`** | [optional] A JSON string containing additional agenda settings. For example '{ "processEvery": "30 seconds" }'          |
 
+## Cors .corsrc
+
+One of the most important features about this branch of agenda-rest is the inclusion of CORS. Cross-origin resource sharing requests (CORS) are supported,
+and can even be customized.
+
+By default, all CORS request are supported. However, through the [run-con](https://github.com/goatandsheep/rc) package, a **.corsrc** file can
+be created in the root directory listing the origins where CORS requests are supported in the format below.
+
+Do look at the [run-con](https://github.com/goatandsheep/rc) package for the types of customization possible for the **.corsrc** file
+
+**.corsrc**
+
+```
+{
+    "cors":[
+        "http://localhost:3000",
+        "http://localhost:5000"
+    ]
+}
+
+```
+
 ## APIs
 
 ## API Documentation
@@ -129,6 +151,6 @@ Cancels (not to be confused with 'delete') any jobs matching the query
 
 ```javascript
 {
-  name: "foo"
+  name: "foo";
 }
 ```
