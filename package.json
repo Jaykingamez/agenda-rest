@@ -1,6 +1,6 @@
 {
-  "name": "@nftoolkit/agenda-rest",
-  "version": "1.0.3",
+  "name": "Jaykingamez/agenda-rest",
+  "version": "1.0.0",
   "description": "Scheduling as a Service",
   "main": "./dist/index.js",
   "jsnext:main": "./src/index.js",
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/nftoolkit/agenda-rest.git"
+    "url": "git+ssh:/git@github.com/Jaykingamez/agenda-rest.git"
   },
   "files": [
     "cli.js",
@@ -41,9 +41,9 @@
     "agenda-rest": "cli.js"
   },
   "bugs": {
-    "url": "https://github.com/nftoolkit/agenda-rest/issues"
+    "url": "https://github.com/Jaykingamez/agenda-rest/issues"
   },
-  "homepage": "https://github.com/nftoolkit/agenda-rest#README",
+  "homepage": "https://github.com/Jaykingamez/agenda-rest#README",
   "devDependencies": {
     "@babel/cli": "7.14.8",
     "@babel/core": "7.15.0",
@@ -60,6 +60,7 @@
     "webpack-cli": "4.7.2"
   },
   "dependencies": {
+    "@koa/cors": "^3.3.0",
     "agenda": "^4.2.1",
     "async-counter": "^1.1.0",
     "babel-runtime": "^6.26.0",
