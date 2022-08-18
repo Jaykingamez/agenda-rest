@@ -10,6 +10,8 @@ import settings from "../settings";
 const bootstrapKoaApp = () => {
     const app = new Koa();
     const router = new Router();
+    // Notify users about the loaded cors configuration
+    console.log('cors', settings.corsArray);
     app.use(cors({
         credentials: true,
         origin: settings.corsArray
