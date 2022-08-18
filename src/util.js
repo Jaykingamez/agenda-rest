@@ -5,11 +5,15 @@ import Router from "koa-router";
 import bodyParser from "koa-bodyparser";
 import { items } from "pythonic";
 import querystring from "querystring";
+import settings from "../settings";
 
 const bootstrapKoaApp = () => {
     const app = new Koa();
     const router = new Router();
-    app.use(cors());
+    app.use(cors({
+        credentials: true,
+        origin: settings.corsArray
+    }));
     app.use(logger());
     app.use((ctx, next) =>
         next().catch((error) => {

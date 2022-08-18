@@ -1,5 +1,5 @@
 {
-  "name": "Jaykingamez/agenda-rest",
+  "name": "@jaykingamez/agenda-rest",
   "version": "1.0.0",
   "description": "Scheduling as a Service",
   "main": "./dist/index.js",
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh:/git@github.com/Jaykingamez/agenda-rest.git"
+    "url": "git+ssh://git@github.com/jaykingamez/agenda-rest.git"
   },
   "files": [
     "cli.js",
