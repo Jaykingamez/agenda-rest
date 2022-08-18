@@ -1,6 +1,4 @@
-[![npm version](https://badge.fury.io/js/agenda-rest.svg)](https://www.npmjs.com/package/agenda-rest)
-<a href="http://travis-ci.org/agenda/agenda-rest"><img src="https://api.travis-ci.org/agenda/agenda-rest.svg?branch=master" alt="Build Status"></a>
-<a href="https://slackin-ekwifvcwbr.now.sh/"><img src="https://slackin-ekwifvcwbr.now.sh/badge.svg" alt="Slack Status"></a>
+[![npm version](https://badge.fury.io/js/agenda-rest.svg)](https://www.npmjs.com/package/@jaykingamez/agenda-rest)
 
 # agenda-rest
 
@@ -36,7 +34,7 @@ agenda-rest --dbhost localhost --dbname agenda
 | **`-t, --timeout`**         | [optional] Timeout for request duration, default is **5000 ms**                                                         |
 | **`-a, --agenda_settings`** | [optional] A JSON string containing additional agenda settings. For example '{ "processEvery": "30 seconds" }'          |
 
-## Cors .corsrc
+## CORS .corsrc
 
 One of the most important features about this branch of agenda-rest is the inclusion of CORS. Cross-origin resource sharing requests (CORS) are supported,
 and can even be customized.
