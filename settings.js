@@ -5,53 +5,60 @@ let appId = process.env.API_KEY;
 let collection = "agendaJobs";
 let definitions = "jobDefinitions";
 let timeout = 5000;
+let corsArray = ['*']; //Allow any origin to access resource
 
 const settings = {
-  get agendaMongoUrl() {
-    return dburi ? dburi : `mongodb://${dbhost}/${dbname}`;
-  },
-  get dbname() {
-    return dbname;
-  },
-  set dbname(value) {
-    dbname = value;
-  },
-  get dburi() {
-    return dburi;
-  },
-  set dburi(value) {
-    dburi = value;
-  },
-  get dbhost() {
-    return dbhost;
-  },
-  set dbhost(value) {
-    dbhost = value;
-  },
-  get collection() {
-    return collection;
-  },
-  set collection(value) {
-    collection = value;
-  },
-  get definitions() {
-    return definitions;
-  },
-  set definitions(value) {
-    definitions = value;
-  },
-  get timeout() {
-    return timeout;
-  },
-  set timeout(value) {
-    timeout = value;
-  },
-  get appId() {
-    return appId;
-  },
-  set appId(value) {
-    appId = value;
-  },
+    get agendaMongoUrl() {
+        return dburi ? dburi : `mongodb://${dbhost}/${dbname}`;
+    },
+    get dbname() {
+        return dbname;
+    },
+    set dbname(value) {
+        dbname = value;
+    },
+    get dburi() {
+        return dburi;
+    },
+    set dburi(value) {
+        dburi = value;
+    },
+    get dbhost() {
+        return dbhost;
+    },
+    set dbhost(value) {
+        dbhost = value;
+    },
+    get collection() {
+        return collection;
+    },
+    set collection(value) {
+        collection = value;
+    },
+    get definitions() {
+        return definitions;
+    },
+    set definitions(value) {
+        definitions = value;
+    },
+    get timeout() {
+        return timeout;
+    },
+    set timeout(value) {
+        timeout = value;
+    },
+    get appId() {
+        return appId;
+    },
+    set appId(value) {
+        appId = value;
+    },
+    get corsArray() {
+        return corsArray;
+    },
+    set corsArray(value) {
+        corsArray = value;
+    },
 };
 
 module.exports = settings;

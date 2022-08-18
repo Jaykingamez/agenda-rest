@@ -72,7 +72,8 @@
     "pythonic": "^2.0.3",
     "regenerator-runtime": "^0.13.3",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4"
+    "request-promise": "^4.2.4",
+    "run-con": "^1.2.11"
   },
   "engines": {
     "node": ">=8"
