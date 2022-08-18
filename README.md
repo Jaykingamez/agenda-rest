@@ -28,31 +28,10 @@ agenda-rest --dbhost localhost --dbname agenda
 | **`-h, --dbhost`**          | [optional] Mongo instance's IP or domain name, default is **localhost**                                                 |
 | **`-u, --dburi`**           | [optional] Full Mongo connection string. If specified, will override **--dbhost**, **--dbname**                         |
 | **`-p, --port`**            | [optional] agenda-rest server port, default is **4040**                                                                 |
+| **`-c, --cors`**            | [optional] A string containing origin for allowed requests. For example 'http://localhost:5000', default is '\*'        |
 | **`-k, --key`**             | [optional] x-api-key to be expected in headers. If not specified, access to agenda-rest server would be unauthenticated |
 | **`-t, --timeout`**         | [optional] Timeout for request duration, default is **5000 ms**                                                         |
 | **`-a, --agenda_settings`** | [optional] A JSON string containing additional agenda settings. For example '{ "processEvery": "30 seconds" }'          |
-
-## CORS .corsrc
-
-One of the most important features about this branch of agenda-rest is the inclusion of CORS. Cross-origin resource sharing requests (CORS) are supported,
-and can even be customized.
-
-By default, all CORS request are supported. However, through the [run-con](https://github.com/goatandsheep/rc) package, a **.corsrc** file can
-be created in the root directory listing the origins where CORS requests are supported in the format below.
-
-Do look at the [run-con](https://github.com/goatandsheep/rc) package for the types of customization possible for the **.corsrc** file
-
-**.corsrc**
-
-```
-{
-    "cors":[
-        "http://localhost:3000",
-        "http://localhost:5000"
-    ]
-}
-
-```
 
 ## APIs
 

@@ -5,7 +5,7 @@ let appId = process.env.API_KEY;
 let collection = "agendaJobs";
 let definitions = "jobDefinitions";
 let timeout = 5000;
-let corsArray = ['*']; //Allow any origin to access resource
+let cors = '*'; //Allow any origin to access resource
 
 const settings = {
     get agendaMongoUrl() {
@@ -53,11 +53,11 @@ const settings = {
     set appId(value) {
         appId = value;
     },
-    get corsArray() {
-        return corsArray;
+    get cors() {
+        return cors;
     },
-    set corsArray(value) {
-        corsArray = value;
+    set cors(value) {
+        cors = value;
     },
 };
 

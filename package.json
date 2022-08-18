@@ -1,6 +1,6 @@
 {
   "name": "@jaykingamez/agenda-rest",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Scheduling as a Service",
   "main": "./dist/index.js",
   "jsnext:main": "./src/index.js",
@@ -72,8 +72,7 @@
     "pythonic": "^2.0.3",
     "regenerator-runtime": "^0.13.3",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4",
-    "run-con": "^1.2.11"
+    "request-promise": "^4.2.4"
   },
   "engines": {
     "node": ">=8"

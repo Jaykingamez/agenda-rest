@@ -12,6 +12,7 @@ program
         (n, d) => Number(n) || d,
         4040
     )
+    .option("-c, --cors <cors>", "[optional] Allowed origin for requests")
     .option("-k, --key <key>", "[optional] X-API-KEY to be expected in headers")
     .option(
         "-t, --timeout <timeout>",
@@ -34,13 +35,7 @@ settings.dbname = options.dbname || settings.dbname;
 settings.dbhost = options.dbhost || settings.dbhost;
 settings.appId = options.key || settings.appId;
 settings.timeout = options.timeout || settings.timeout;
-
-
-// Check if cors config file exists
-const corsRC = require('rc')('cors', {
-    cors: ['*']
-});
-settings.corsArray = corsRC.cors;
+settings.cors = options.cors || settings.cors;
 
 if (options.agenda_settings) {
     settings.agenda = JSON.parse(options.agenda_settings);
