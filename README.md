@@ -4,6 +4,12 @@ Scheduling as a Service, based on [Agenda](https://github.com/agenda/agenda)
 
 Assuming all job types could be thought of as REST endpoints, scheduling could be offered as a service. `agenda-rest` does just that, introduce a URL, name it, agenda-rest will call it on the times that you specify.
 
+Differences between the fork and the main [agenda-rest](https://github.com/agenda/agenda-rest) repo:
+
+Added cors customization [Reference](#command-line-interface-options)
+
+Allowed Multiple Every Schedules to exist [Reference](https://github.com/agenda/agenda-rest/issues/92)
+
 ## Installation
 
 Install agenda-rest as a global package
