@@ -145,24 +145,15 @@ const scheduleTypes = {
     },
 };
 
-const every = (interval, name, data, options) => {
-    return new Promise((resolve, reject) => {
-        agenda.create(name, data)
-            //.schedule(interval) if you don't want the job to run right away
-            .repeatEvery(interval, options)
-            .save((err) => err ? reject(err) : resolve());
-    });
-};
-
-
 const getScheduleJobFunction = (scheduleType) => async (job, jobs, agenda) => {
     // check if "for repetition" is message
     if (scheduleType.message === "for repetition") {
-        await scheduleType.fn(agenda)(async (interval, name, data, options) => {
+        const every = async (interval, name, data, options) => {
             await agenda.create(name, data)
                 .repeatEvery(interval, options)
-                .save((err) => err ? console.err(err) : console.log("Saved successfully to Database"));
-        });
+                .save((err) => err ? console.err(err) : console.log("Every scheduled"));
+        };
+        await every(job.interval, job.name, job.data, job.options);
     } else {
         await scheduleType.fn(agenda)(...scheduleType.getParams(job));
     }
