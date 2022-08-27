@@ -112,6 +112,7 @@ const pickValues = ({ obj, pickProps }) =>
         (props, prop) => (obj[prop] ? [...props, obj[prop]] : props),
         []
     );
+
 const scheduleTypes = {
     now: {
         fn: (agenda) => agenda.now.bind(agenda),
@@ -135,7 +136,7 @@ const scheduleTypes = {
         },
     },
     every: {
-        fn: (agenda) => agenda.create.bind(agenda),
+        fn: (agenda) => agenda.everyNew.bind(agenda),
         message: "for repetition",
         getParams: (job) =>
             pickValues({
@@ -146,17 +147,7 @@ const scheduleTypes = {
 };
 
 const getScheduleJobFunction = (scheduleType) => async (job, jobs, agenda) => {
-    // check if "for repetition" is message
-    if (scheduleType.message === "for repetition") {
-        const every = async (interval, name, data, options) => {
-            await agenda.create(name, data)
-                .repeatEvery(interval, options)
-                .save((err) => err ? console.err(err) : console.log("Every scheduled"));
-        };
-        await every(job.interval, job.name, job.data, job.options);
-    } else {
-        await scheduleType.fn(agenda)(...scheduleType.getParams(job));
-    }
+    await scheduleType.fn(agenda)(...scheduleType.getParams(job));
     return `job scheduled ${scheduleType.message}`;
 };
 
