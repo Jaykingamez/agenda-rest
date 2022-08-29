@@ -123,12 +123,10 @@ const scheduleTypes = {
         fn: (agenda) => agenda.schedule.bind(agenda),
         message: "for once",
         getParams: (job) => {
-            // Check if interval is timestamp
-            let time = parseInt(job.interval, 10);
-            time = isNaN(time) ? job.interval : time;
-            // Check if interval is date
-            time = new Date(time);
+            // Check if interval is date or timestamp
+            let time = new Date(job.interval);
             time = isValidDate(time) ? time : job.interval;
+            console.log(time);
             return pickValues({
                 obj: { ...job, time },
                 pickProps: ["time", "name", "data"],
