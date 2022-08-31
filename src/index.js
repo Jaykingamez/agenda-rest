@@ -2,6 +2,7 @@ import { promisify } from "util";
 import Agenda from "agenda";
 import settings from "../settings";
 import { bootstrapKoaApp } from "./util";
+import humanInterval from "human-interval";
 import {
     defineJob,
     jobOperations,
@@ -19,9 +20,13 @@ const agenda = new Agenda({
     ...settings.agenda,
 });
 
-// create everyNew func
+// create everyNew func so that multiple interval schedules can be created
 agenda.everyNew = async (interval, name, data, options) => {
+    //schedule starting date - interval, so it starts on starting date
+    let start = new Date(options.startDate) - humanInterval(interval);
+
     await agenda.create(name, data)
+        .schedule(new Date(start).toISOString())
         .repeatEvery(interval, options)
         .save((err) => console.err(err));
 };
