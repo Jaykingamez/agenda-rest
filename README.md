@@ -15,7 +15,7 @@ Allowed Multiple Every Schedules to exist [Reference](https://github.com/agenda/
 Install agenda-rest as a global package
 
 ```bash
-npm install -g agenda-rest
+npm install -g @jaykingamez/agenda-rest
 ```
 
 ## Usage
