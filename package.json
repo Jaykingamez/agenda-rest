@@ -47,11 +47,11 @@
   "devDependencies": {
     "@babel/cli": "7.19.3",
     "@babel/core": "7.19.3",
-    "@babel/preset-env": "7.19.3",
+    "@babel/preset-env": "7.19.4",
     "@babel/register": "7.18.9",
     "ava": "=4.3.3",
     "babel-loader": "8.2.5",
-    "eslint": "8.24.0",
+    "eslint": "8.25.0",
     "prettier": "2.7.1",
     "prettier-eslint": "15.0.1",
     "prettier-eslint-cli": "7.1.0",
@@ -60,7 +60,7 @@
     "webpack-cli": "4.10.0"
   },
   "dependencies": {
-    "@koa/cors": "^3.4.1",
+    "@koa/cors": "^4.0.0",
     "agenda": "^4.3.0",
     "async-counter": "^1.1.0",
     "babel-runtime": "^6.26.0",
