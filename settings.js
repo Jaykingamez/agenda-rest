@@ -1,5 +1,5 @@
 let dbname = process.env.DB_NAME || "agenda";
-let dbhost = process.env.DB_HOST || "localhost";
+let dbhost = process.env.DB_HOST || "127.0.0.1";
 let dburi = process.env.DB_URI || null;
 let appId = process.env.API_KEY;
 let collection = "agendaJobs";
