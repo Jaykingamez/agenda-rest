@@ -1,4 +1,4 @@
-import { SuperAgent as superagent } from "superagent";
+import request from "superagent";
 import settings from "../settings";
 import { isValidDate, buildUrlWithParams, buildUrlWithQuery } from "./util";
 
@@ -54,9 +54,9 @@ const defineJob = async (job, jobs, agenda) => {
 
     // Error if no response in timeout
     try {
-      result = await superagent[options.method](options.uri).send(options.body).set(options.headers)
+      result = await request[options.method](options.uri).send(options.body).set(options.headers)
       if (callback) {
-        return await superagent[callback.method](callback.url).send({ data, response: result }).set(callback.headers);
+        return await request[callback.method](callback.url).send({ data, response: result }).set(callback.headers);
       }
     } catch (error) {
       job.fail(`message: ${err.message}`);

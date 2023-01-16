@@ -1,6 +1,6 @@
 import { promisify } from "util";
-import test from "ava";
 import request from "supertest";
+import assert from "assert";
 import {
   bootstrapKoaApp,
   oncePerKey,
@@ -28,38 +28,42 @@ const bootstrapApp = async () => {
   await jobsReady;
 };
 
-test.before(() => bootstrapApp());
+describe("Testing agenda-rest", () => {
+  before(async () => {
+    await bootstrapApp();
+  })
 
-test.serial("POST /api/job fails without content", async (t) => {
-  const res = await agendaAppRequest.post("/api/job").send();
+  describe("POST /api/job", () => {
+    it(`Testing request without content`, async () => {
+      const res = await agendaAppRequest.post("/api/job").send();
+      expect(res.status, 400);
+    })
 
-  t.is(res.status, 400);
-});
+    it(`Testing request with specified job`, async () => {
+      const res = await agendaAppRequest
+        .post("/api/job")
+        .send({ name: "foo", url: getTestAppUrl("/fooWrong") });
 
-test.serial("POST /api/job succeeds when a job is specified", async (t) => {
-  const res = await agendaAppRequest
-    .post("/api/job")
-    .send({ name: "foo", url: getTestAppUrl("/fooWrong") });
+      expect(res.status, 200);
+    })
+  })
 
-  t.is(res.status, 200);
-});
+  describe("PUT /api/job", () => {
+    it(`Testing request when job does not exist`, async () => {
+      const res = await agendaAppRequest
+        .put("/api/job/fooWrong")
+        .send({ url: getTestAppUrl("/foo") });
+      expect(res.status, 400);
+    })
 
-test.serial("PUT /api/job fails when the job does not exists", async (t) => {
-  const res = await agendaAppRequest
-    .put("/api/job/fooWrong")
-    .send({ url: getTestAppUrl("/foo") });
-
-  t.is(res.status, 400);
-});
-
-test.serial("PUT /api/job succeeds when the job exists", async (t) => {
-  const res = await agendaAppRequest
-    .put("/api/job/foo")
-    .send({ url: getTestAppUrl("/foo") });
-
-  t.is(res.status, 200);
-});
-
+    it(`Testing request when job exists`, async () => {
+      const res = await agendaAppRequest
+        .put("/api/job/foo")
+        .send({ url: getTestAppUrl("/foo") });
+      expect(res.status, 200)
+    })
+  })
+})
 const fooProps = {};
 
 const defineFooEndpoint = (
@@ -78,8 +82,7 @@ const defineFooEndpoint = (
       ctx.body = fooProps.message;
       ctx.status = fooProps.statusCode;
       console.log(
-        `${fooProps.message}! ${await fooProps.counter.count()} of ${
-          fooProps.counter.countTimes
+        `${fooProps.message}! ${await fooProps.counter.count()} of ${fooProps.counter.countTimes
         }`
       );
       await next();
