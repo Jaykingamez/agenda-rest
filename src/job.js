@@ -1,6 +1,6 @@
-import { SuperAgent as superagent } from "superagent";
-import settings from "../settings";
-import { isValidDate, buildUrlWithParams, buildUrlWithQuery } from "./util";
+const superagent = require("superagent");
+const settings = require("../settings");
+const { isValidDate, buildUrlWithParams, buildUrlWithQuery } = require("./util");
 
 const getCheckJobFormatFunction =
   (jobProperty, defaultJob = {}) =>
@@ -170,4 +170,4 @@ const promiseJobOperation = async (
   return jobOperation.fn(job, jobs, agenda);
 };
 
-export { promiseJobOperation, jobOperations, jobAssertions, defineJob };
+module.exports = { promiseJobOperation, jobOperations, jobAssertions, defineJob };
