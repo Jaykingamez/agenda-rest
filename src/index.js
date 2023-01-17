@@ -1,117 +1,117 @@
-import { promisify } from "util";
-import Agenda from "agenda";
-import settings from "../settings";
-import { bootstrapKoaApp } from "./util";
-import humanInterval from "human-interval";
-import {
-    defineJob,
-    jobOperations,
-    jobAssertions,
-    promiseJobOperation,
-} from "./job";
+const { promisify } = require("util");
+const Agenda = require("agenda");
+const settings = require("../settings");
+const { bootstrapKoaApp } = require("./util");
+const humanInterval = require("human-interval");
+const {
+  defineJob,
+  jobOperations,
+  jobAssertions,
+  promiseJobOperation,
+} = require("./job");
 
 const { app, router } = bootstrapKoaApp();
 
 const agenda = new Agenda({
-    db: {
-        address: settings.agendaMongoUrl,
-        collection: settings.collection ? settings.collection : undefined,
-    },
-    ...settings.agenda,
+  db: {
+    address: settings.agendaMongoUrl,
+    collection: settings.collection ? settings.collection : undefined,
+  },
+  ...settings.agenda,
 });
 
 // create everyNew func so that multiple interval schedules can be created
 agenda.everyNew = async (interval, name, data, options) => {
-    //schedule starting date - interval, so it starts on starting date
-    let start = new Date(options.startDate) - humanInterval(interval);
+  //schedule starting date - interval, so it starts on starting date
+  let start = new Date(options.startDate) - humanInterval(interval);
 
-    await agenda.create(name, data)
-        .schedule(new Date(start).toISOString())
-        .repeatEvery(interval, options)
-        .save((err) => console.err(err));
+  await agenda.create(name, data)
+    .schedule(new Date(start).toISOString())
+    .repeatEvery(interval, options)
+    .save((err) => console.err(err));
 };
 
 const jobsReady = agenda._ready.then(async () => {
-    const jobs = agenda._mdb.collection(settings.definitions);
-    jobs.toArray = () => {
-        const jobsCursor = jobs.find();
-        return promisify(jobsCursor.toArray).bind(jobsCursor)();
-    };
+  const jobs = agenda._mdb.collection(settings.definitions);
+  jobs.toArray = () => {
+    const jobsCursor = jobs.find();
+    return promisify(jobsCursor.toArray).bind(jobsCursor)();
+  };
 
-    await jobs
-        .toArray()
-        .then((jobsArray) =>
-            Promise.all(jobsArray.map((job) => defineJob(job, jobs, agenda)))
-        );
+  await jobs
+    .toArray()
+    .then((jobsArray) =>
+      Promise.all(jobsArray.map((job) => defineJob(job, jobs, agenda)))
+    );
 
-    await agenda.start();
-    return jobs;
+  await agenda.start();
+  return jobs;
 });
 
 const getJobMiddleware =
-    (jobAssertion, jobOperation, errorCode = 400) =>
-        async (ctx, next) => {
-            if (settings.appId && ctx.request.headers["x-api-key"] !== settings.appId) {
-                ctx.throw(403, "Forbidden");
-            }
+  (jobAssertion, jobOperation, errorCode = 400) =>
+    async (ctx, next) => {
+      if (settings.appId && ctx.request.headers["x-api-key"] !== settings.appId) {
+        ctx.throw(403, "Forbidden");
+      }
 
-            const job = ctx.request.body || {};
-            if (ctx.params.jobName) {
-                job.name = ctx.params.jobName;
-            }
+      const job = ctx.request.body || {};
+      if (ctx.params.jobName) {
+        job.name = ctx.params.jobName;
+      }
 
-            const jobs = await jobsReady;
-            ctx.body = await promiseJobOperation(
-                job,
-                jobs,
-                agenda,
-                jobAssertion,
-                jobOperation
-            ).catch((error) => ctx.throw(errorCode, error));
-            await next();
-        };
+      const jobs = await jobsReady;
+      ctx.body = await promiseJobOperation(
+        job,
+        jobs,
+        agenda,
+        jobAssertion,
+        jobOperation
+      ).catch((error) => ctx.throw(errorCode, error));
+      await next();
+    };
 
 const listJobs = async (ctx, next) => {
-    if (settings.appId && ctx.request.headers["x-api-key"] !== settings.appId) {
-        ctx.throw(403, "Forbidden");
-    }
+  if (settings.appId && ctx.request.headers["x-api-key"] !== settings.appId) {
+    ctx.throw(403, "Forbidden");
+  }
 
-    ctx.body = await jobsReady.then((jobs) => jobs.toArray());
-    await next();
+  ctx.body = await jobsReady.then((jobs) => jobs.toArray());
+  await next();
 };
 
 const createJob = getJobMiddleware(
-    jobAssertions.notExists,
-    jobOperations.create
+  jobAssertions.notExists,
+  jobOperations.create
 );
 const removeJob = getJobMiddleware(
-    jobAssertions.alreadyExists,
-    jobOperations.delete
+  jobAssertions.alreadyExists,
+  jobOperations.delete
 );
 const updateJob = getJobMiddleware(
-    jobAssertions.alreadyExists,
-    jobOperations.update
+  jobAssertions.alreadyExists,
+  jobOperations.update
 );
 const runJobOnce = getJobMiddleware(
-    jobAssertions.alreadyExists,
-    jobOperations.once
+  jobAssertions.alreadyExists,
+  jobOperations.once
 );
 const runJobEvery = getJobMiddleware(
-    jobAssertions.alreadyExists,
-    jobOperations.every
+  jobAssertions.alreadyExists,
+  jobOperations.every
 );
 const runJobNow = getJobMiddleware(
-    jobAssertions.alreadyExists,
-    jobOperations.now
+  jobAssertions.alreadyExists,
+  jobOperations.now
 );
 const cancelJobs = getJobMiddleware(
-    jobAssertions.doNotAssert,
-    jobOperations.cancel
+  jobAssertions.doNotAssert,
+  jobOperations.cancel
 );
 
 // Latest
 router.get("/health", (ctx) => {
-    ctx.status = 200;
+  ctx.status = 200;
 });
 router.get("/api/job", listJobs);
 router.post("/api/job", createJob);
@@ -123,12 +123,12 @@ router.post("/api/job/now", runJobNow);
 router.post("/api/job/cancel", cancelJobs);
 
 const redirect =
-    (route, status = 307) =>
-        async (ctx, next) => {
-            ctx.status = status;
-            ctx.redirect(route);
-            await next();
-        };
+  (route, status = 307) =>
+    async (ctx, next) => {
+      ctx.status = status;
+      ctx.redirect(route);
+      await next();
+    };
 
 // V1
 router.get("/api/v1/job", redirect("/api/job"));
@@ -140,5 +140,4 @@ router.post("/api/v1/job/every", redirect("/api/job/every"));
 router.post("/api/v1/job/now", redirect("/api/job/now"));
 router.post("/api/v1/job/cancel", redirect("/api/job/cancel"));
 
-export { app, router, agenda, jobsReady };
-export default app;
+module.exports = { app, router, agenda, jobsReady };
