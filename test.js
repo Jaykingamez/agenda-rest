@@ -1,6 +1,6 @@
 import { promisify } from "util";
-import test from "ava";
 import request from "supertest";
+import { expect } from "assert";
 import {
   bootstrapKoaApp,
   oncePerKey,
@@ -8,16 +8,18 @@ import {
   buildUrlWithParams,
   buildUrlWithQuery,
 } from "./src/util";
+import { app, jobsReady } from "./src";
 
 const agendaAppUrl = "http://localhost:4041";
 const testAppUrl = "http://localhost:4042";
+const jobName = "foo";
+const nonExistentJobName = "fooWrong";
 const { app: testApp, router: testAppRouter } = bootstrapKoaApp();
 const getTestAppUrl = (path) => (path ? `${testAppUrl}${path}` : testAppUrl);
 
 const agendaAppRequest = request(agendaAppUrl);
 
 const bootstrapApp = async () => {
-  const { app, jobsReady } = require("./src");
   await promisify(app.listen)
     .bind(app)(4041)
     .then(() => console.log("agenda-rest app running"));
@@ -28,37 +30,50 @@ const bootstrapApp = async () => {
   await jobsReady;
 };
 
-test.before(() => bootstrapApp());
+const removeTestData = async () => {
+  // Delete Job
+  await agendaAppRequest
+    .post(`/api/job/${jobName}`)
+    .send();
+}
 
-test.serial("POST /api/job fails without content", async (t) => {
-  const res = await agendaAppRequest.post("/api/job").send();
+describe("Testing agenda-rest", () => {
+  before(async () => {
+    await bootstrapApp();
+    await removeTestData();
+  })
 
-  t.is(res.status, 400);
-});
+  describe("POST /api/job", () => {
+    it(`Testing request without content`, async () => {
+      const res = await agendaAppRequest.post("/api/job").send();
+      expect(res.status, 400);
+    })
 
-test.serial("POST /api/job succeeds when a job is specified", async (t) => {
-  const res = await agendaAppRequest
-    .post("/api/job")
-    .send({ name: "foo", url: getTestAppUrl("/fooWrong") });
+    it(`Testing request with specified job`, async () => {
+      const res = await agendaAppRequest
+        .post("/api/job")
+        .send({ name: jobName, url: getTestAppUrl() });
 
-  t.is(res.status, 200);
-});
+      expect(res.status, 200);
+    })
+  })
 
-test.serial("PUT /api/job fails when the job does not exists", async (t) => {
-  const res = await agendaAppRequest
-    .put("/api/job/fooWrong")
-    .send({ url: getTestAppUrl("/foo") });
+  describe("PUT /api/job", () => {
+    it(`Testing request when job does not exist`, async () => {
+      const res = await agendaAppRequest
+        .put(`/api/job/${nonExistentJobName}`)
+        .send({ url: getTestAppUrl() });
+      expect(res.status, 400);
+    })
 
-  t.is(res.status, 400);
-});
-
-test.serial("PUT /api/job succeeds when the job exists", async (t) => {
-  const res = await agendaAppRequest
-    .put("/api/job/foo")
-    .send({ url: getTestAppUrl("/foo") });
-
-  t.is(res.status, 200);
-});
+    it(`Testing request when job exists`, async () => {
+      const res = await agendaAppRequest
+        .put(`/api/job/${jobName}`)
+        .send({ url: getTestAppUrl() })
+    });
+    expect(res.status, 200)
+  })
+})
 
 const fooProps = {};
 
@@ -78,8 +93,7 @@ const defineFooEndpoint = (
       ctx.body = fooProps.message;
       ctx.status = fooProps.statusCode;
       console.log(
-        `${fooProps.message}! ${await fooProps.counter.count()} of ${
-          fooProps.counter.countTimes
+        `${fooProps.message}! ${await fooProps.counter.count()} of ${fooProps.counter.countTimes
         }`
       );
       await next();
@@ -98,7 +112,6 @@ testAppRouter.post('/foo/:fooParam', async (ctx, next) => {
   ctx.status = 200;
   await next();
 });
-
 testAppRouter.post('/foo/cb', async (ctx, next) => {
   console.log('foo callback invoked!');
   ctx.body = 'foo callback success';
@@ -180,4 +193,4 @@ test("Build URL with query.", (t) => {
     }),
     "http://example.com/foo?query1=value1&query2=value2"
   );
-});
+})
