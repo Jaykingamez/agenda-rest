@@ -1,10 +1,10 @@
-import Koa from "koa";
-import cors from '@koa/cors';
-import logger from "koa-logger";
-import Router from "koa-router";
-import bodyParser from "koa-bodyparser";
-import querystring from "querystring";
-import settings from "../settings";
+const Koa = require("koa");
+const cors = require("@koa/cors")
+const logger = require("koa-logger");
+const Router = require("koa-router");
+const bodyParser = require("koa-bodyparser")
+const querystring = require("querystring");
+const settings = require("../settings");
 
 const bootstrapKoaApp = () => {
   const app = new Koa();
@@ -108,7 +108,7 @@ const buildUrlWithQuery = ({ url, query }) => {
   return url;
 };
 
-export {
+module.exports = {
   bootstrapKoaApp,
   isValidDate,
   oncePerKey,
