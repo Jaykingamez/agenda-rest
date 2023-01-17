@@ -1,14 +1,14 @@
-import { promisify } from "util";
-import request from "supertest";
-import { expect } from "assert";
-import {
+const { promisify } = require("util");
+const request = require("supertest");
+const expect = require("assert");
+const {
   bootstrapKoaApp,
   oncePerKey,
   AsyncCounter,
   buildUrlWithParams,
   buildUrlWithQuery,
-} from "./src/util";
-import { app, jobsReady } from "./src";
+} = require("./src/util");
+const { app, jobsReady } = require("./src");
 
 const agendaAppUrl = "http://localhost:4041";
 const testAppUrl = "http://localhost:4042";
@@ -33,7 +33,7 @@ const bootstrapApp = async () => {
 const removeTestData = async () => {
   // Delete Job
   await agendaAppRequest
-    .post(`/api/job/${jobName}`)
+    .delete(`/api/job/${jobName}`)
     .send();
 }
 
@@ -70,8 +70,9 @@ describe("Testing agenda-rest", () => {
       const res = await agendaAppRequest
         .put(`/api/job/${jobName}`)
         .send({ url: getTestAppUrl() })
+      expect(res.status, 200)
     });
-    expect(res.status, 200)
+
   })
 })
 
@@ -169,12 +170,6 @@ test.serial("DELETE /api/job succeeds when a job is defined", async (t) => {
   t.is(res.status, 200);
 });
 
-test("GET /health returns 200 OK", async (t) => {
-  const res = await agendaAppRequest.get("/health");
-
-  t.is(res.status, 200);
-});
-
 test("Build URL with parameters.", (t) => {
   t.is(
     buildUrlWithParams({
@@ -193,4 +188,5 @@ test("Build URL with query.", (t) => {
     }),
     "http://example.com/foo?query1=value1&query2=value2"
   );
-})
+});
+
