@@ -37,47 +37,7 @@ const removeTestData = async () => {
     .send();
 }
 
-describe("Testing agenda-rest", () => {
-  before(async () => {
-    await bootstrapApp();
-    await removeTestData();
-  })
-
-  describe("POST /api/job", () => {
-    it(`Testing request without content`, async () => {
-      const res = await agendaAppRequest.post("/api/job").send();
-      expect(res.status, 400);
-    })
-
-    it(`Testing request with specified job`, async () => {
-      const res = await agendaAppRequest
-        .post("/api/job")
-        .send({ name: jobName, url: getTestAppUrl() });
-
-      expect(res.status, 200);
-    })
-  })
-
-  describe("PUT /api/job", () => {
-    it(`Testing request when job does not exist`, async () => {
-      const res = await agendaAppRequest
-        .put(`/api/job/${nonExistentJobName}`)
-        .send({ url: getTestAppUrl() });
-      expect(res.status, 400);
-    })
-
-    it(`Testing request when job exists`, async () => {
-      const res = await agendaAppRequest
-        .put(`/api/job/${jobName}`)
-        .send({ url: getTestAppUrl() })
-      expect(res.status, 200)
-    });
-
-  })
-})
-
 const fooProps = {};
-
 const defineFooEndpoint = (
   route,
   message,
@@ -104,6 +64,103 @@ const defineFooEndpoint = (
   return counter;
 };
 
+describe("Testing agenda-rest", () => {
+  before(async () => {
+    await bootstrapApp();
+    await removeTestData();
+  })
+
+  describe("POST /api/job", () => {
+    it(`Testing request without content`, async () => {
+      const res = await agendaAppRequest.post("/api/job").send();
+      expect(res.status, 400);
+    })
+
+    it(`Testing request with specified job`, async () => {
+      const res = await agendaAppRequest
+        .post("/api/job")
+        .send({ name: jobName, url: getTestAppUrl() });
+      expect(res.status, 200);
+    })
+  })
+
+  describe("PUT /api/job", () => {
+    it(`Testing request when job does not exist`, async () => {
+      const res = await agendaAppRequest
+        .put(`/api/job/${nonExistentJobName}`)
+        .send({ url: getTestAppUrl() });
+      expect(res.status, 400);
+    })
+
+    it(`Testing request when job exists`, async () => {
+      const res = await agendaAppRequest
+        .put(`/api/job/${jobName}`)
+        .send({ url: getTestAppUrl() })
+      expect(res.status, 200)
+    });
+
+    describe("POST /api/job/now", () => {
+      it(`Testing with existing job definition`, async () => {
+        const res = await agendaAppRequest
+          .post("/api/job/now")
+          .send({ name: "foo" });
+        expect(res.status, 200);
+        expect(res.text, "job scheduled for now");
+      })
+    })
+
+    describe("POST /api/job/now", () => {
+      it(`Testing with existing job definition`, async () => {
+        const res = await agendaAppRequest
+          .post("/api/job/every")
+          .send({ name: "foo", interval: "2 seconds" });
+        expect(res.text, "job scheduled for repetition");
+      })
+    })
+
+    describe("POST /api/job/once", () => {
+      it(`Testing with existing job definition`, async () => {
+        const res = await agendaAppRequest
+          .post("/api/job/once")
+          .send({ name: "foo", interval: new Date().getTime() + 10000 });
+        // .send({name: 'foo', interval: 'in 10 seconds'});
+        expect(res.status, 200);
+        expect(res.text, "job scheduled for once");
+      })
+    })
+
+    describe("DELETE /api/job", () => {
+      it(`Testing delete job`, async () => {
+        const res = await agendaAppRequest.delete("/api/job/foo");
+        expect(res.status, 200);
+      })
+    })
+
+    describe(`Testing buildUrl`, () => {
+      it("Build URL with parameters.", () => {
+        expect(
+          buildUrlWithParams({
+            url: "http://example.com:8888/foo/:param1/:param2",
+            params: { param1: "value1", param2: "value2" },
+          }),
+          "http://example.com:8888/foo/value1/value2"
+        );
+      });
+
+      it("Build URL with query.", () => {
+        expect(
+          buildUrlWithQuery({
+            url: "http://example.com/foo",
+            query: { query1: "value1", query2: "value2" },
+          }),
+          "http://example.com/foo?query1=value1&query2=value2"
+        );
+      });
+    })
+
+  })
+})
+
 /* TODO
 testAppRouter.post('/foo/:fooParam', async (ctx, next) => {
   console.log('foo with params invoked!');
@@ -121,72 +178,8 @@ testAppRouter.post('/foo/cb', async (ctx, next) => {
 });
 */
 
-test.serial(
-  "POST /api/job/now with existing foo definition invokes the foo endpoint",
-  async (t) => {
-    const counter = defineFooEndpoint("/foo", "foo now invoked");
-    const res = await agendaAppRequest
-      .post("/api/job/now")
-      .send({ name: "foo" });
 
-    t.is(res.text, "job scheduled for now");
 
-    await counter.finished;
-  }
-);
 
-test.serial(
-  "POST /api/job/every with existing foo definition invokes the foo endpoint",
-  async (t) => {
-    const counter = defineFooEndpoint("/foo", "foo every invoked", 3);
-    const res = await agendaAppRequest
-      .post("/api/job/every")
-      .send({ name: "foo", interval: "2 seconds" });
 
-    t.is(res.text, "job scheduled for repetition");
-
-    await counter.finished;
-  }
-);
-
-test.serial(
-  "POST /api/job/once with existing foo definition invokes the foo endpoint",
-  async (t) => {
-    const counter = defineFooEndpoint("/foo", "foo once invoked");
-    const res = await agendaAppRequest
-      .post("/api/job/once")
-      .send({ name: "foo", interval: new Date().getTime() + 10000 });
-    // .send({name: 'foo', interval: 'in 10 seconds'});
-
-    t.is(res.text, "job scheduled for once");
-
-    await counter.finished;
-  }
-);
-
-test.serial("DELETE /api/job succeeds when a job is defined", async (t) => {
-  const res = await agendaAppRequest.delete("/api/job/foo");
-
-  t.is(res.status, 200);
-});
-
-test("Build URL with parameters.", (t) => {
-  t.is(
-    buildUrlWithParams({
-      url: "http://example.com:8888/foo/:param1/:param2",
-      params: { param1: "value1", param2: "value2" },
-    }),
-    "http://example.com:8888/foo/value1/value2"
-  );
-});
-
-test("Build URL with query.", (t) => {
-  t.is(
-    buildUrlWithQuery({
-      url: "http://example.com/foo",
-      query: { query1: "value1", query2: "value2" },
-    }),
-    "http://example.com/foo?query1=value1&query2=value2"
-  );
-});
 
